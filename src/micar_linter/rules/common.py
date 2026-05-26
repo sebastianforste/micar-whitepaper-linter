@@ -3,7 +3,7 @@
 Art. 6(1), Art. 19(1), and Art. 51(1) MiCAR each require the white paper to be
 fair, clear, and not misleading. The summary, the date of notification, the
 required risk warning, and the management-body statement are mandated for all
-three regimes (Art. 6(5)–(6), Art. 19(5)–(6), Art. 51(5)–(6) MiCAR).
+three regimes (Art. 6(5)-(6), Art. 19(5)-(6), Art. 51(5)-(6) MiCAR).
 
 These checks run before the Annex-specific ruleset.
 """
@@ -53,7 +53,10 @@ COMMON_RULES: tuple[Rule, ...] = (
         rule_id="COMMON.LANGUAGE",
         citation="Art. 6 Abs. 12, Art. 19 Abs. 11, Art. 51 Abs. 10 MiCAR",
         section="language",
-        label="Language of the white paper (official language of the home Member State or customary in international finance)",
+        label=(
+            "Language of the white paper "
+            "(home Member State official language or customary in international finance)"
+        ),
         required_terms=("language",),
         min_words=10,
         severity=Severity.MAJOR,

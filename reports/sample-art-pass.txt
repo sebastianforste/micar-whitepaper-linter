@@ -19,7 +19,7 @@ Pass: 14  |  Review: 0  |  Missing: 0  |  Blockers: 0
            Cite:  Art. 8 Abs. 1, Art. 17, Art. 49 MiCAR
            Section: 'notification_date'  (8 words)
 
-[PASS  ] [MAJOR  ] COMMON.LANGUAGE  Language of the white paper (official language of the home Member State or customary in international finance)
+[PASS  ] [MAJOR  ] COMMON.LANGUAGE  Language of the white paper (home Member State official language or customary in international finance)
            Cite:  Art. 6 Abs. 12, Art. 19 Abs. 11, Art. 51 Abs. 10 MiCAR
            Section: 'language'  (28 words)
 

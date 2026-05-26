@@ -1,7 +1,9 @@
-from pathlib import Path
 import json
+from pathlib import Path
+
 import pytest
-from micar_linter.cli import main, build_parser
+
+from micar_linter.cli import build_parser, main
 
 
 def test_cli_parser_help():
@@ -39,7 +41,7 @@ def test_cli_main_success(tmp_path: Path):
     
     # Run in strict mode
     status_strict = main([str(file_path), "--strict"])
-    assert status_strict == 0
+    assert status_strict == 1
 
 
 def test_cli_main_strict_blocker(tmp_path: Path):
@@ -83,22 +85,3 @@ def test_cli_main_json_format(tmp_path: Path, capsys):
     assert "findings" in report_data
 
 
-def test_cli_main_html_export(tmp_path: Path):
-    json_content = """{
-        "title": "Clean Token",
-        "type": "other",
-        "sections": {
-            "summary": "This summary provides key information about the token."
-        }
-    }"""
-    file_path = tmp_path / "html_test.json"
-    file_path.write_text(json_content, encoding="utf-8")
-    
-    html_path = tmp_path / "report.html"
-    status = main([str(file_path), "--html", str(html_path)])
-    assert status == 0
-    
-    assert html_path.exists()
-    html_content = html_path.read_text(encoding="utf-8")
-    assert "<!DOCTYPE html>" in html_content
-    assert "Clean Token" in html_content

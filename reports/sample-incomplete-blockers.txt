@@ -26,7 +26,7 @@ Pass: 0  |  Review: 10  |  Missing: 4  |  Blockers: 11
            -  Section is thin: 1 words, expected at least 5.
            -  Missing review terms: date.
 
-[REVIEW] [MAJOR  ] COMMON.LANGUAGE  Language of the white paper (official language of the home Member State or customary in international finance)
+[REVIEW] [MAJOR  ] COMMON.LANGUAGE  Language of the white paper (home Member State official language or customary in international finance)
            Cite:  Art. 6 Abs. 12, Art. 19 Abs. 11, Art. 51 Abs. 10 MiCAR
            Section: 'language'  (1 words)
            -  Section is thin: 1 words, expected at least 10.

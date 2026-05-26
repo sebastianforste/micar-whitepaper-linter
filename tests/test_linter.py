@@ -1,4 +1,3 @@
-import pytest
 from micar_linter.linter import Linter, lint_whitepaper
 from micar_linter.rules.base import Rule, Severity
 from micar_linter.whitepaper import Whitepaper, WhitepaperType
@@ -111,7 +110,7 @@ def test_linter_required_patterns():
         title="Test WP",
         type=WhitepaperType.OTHER,
         sections={
-            "summary": "This section has holder rights but no redemption.",
+            "summary": "This section has holder rights but no payout.",
         },
         metadata={},
     )

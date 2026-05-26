@@ -1,6 +1,8 @@
 from pathlib import Path
+
 import pytest
-from micar_linter.whitepaper import load_whitepaper, WhitepaperType
+
+from micar_linter.whitepaper import WhitepaperType, load_whitepaper
 
 
 def test_load_whitepaper_valid(tmp_path: Path):
