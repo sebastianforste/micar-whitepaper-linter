@@ -25,7 +25,7 @@ Alpha. The Annex I / II / III scaffolds are in place at the Part level and cover
 
 ## Stack
 
-Python 3.11+, zero runtime dependencies, hatchling build, pytest, ruff, GitHub Actions CI.
+Python 3.11+, zero core runtime dependencies, hatchling build, pytest, ruff, GitHub Actions CI. Optional extras `[docx]` (python-docx) and `[pdf]` (pypdf) unlock DOCX and PDF whitepaper ingestion.
 
 ## How to run
 
@@ -36,7 +36,7 @@ python3 -m micar_linter examples/art-stablecoin.json
 python3 -m micar_linter examples/incomplete.json --strict
 ```
 
-No install needed: there are no runtime dependencies. The package runs straight from source via `python3 -m micar_linter`. To install as a CLI named `micar-lint`, run `pip install -e .` and you can drop the `python3 -m`.
+No install needed for the JSON workflow: the core package has zero runtime dependencies and runs straight from source via `python3 -m micar_linter`. To install as a CLI named `micar-lint`, run `pip install -e .` and you can drop the `python3 -m`. For PDF or DOCX ingestion run `pip install -e ".[all]"`.
 
 JSON output for pipelines:
 

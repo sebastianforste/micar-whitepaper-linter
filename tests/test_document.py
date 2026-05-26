@@ -1,9 +1,10 @@
 from pathlib import Path
 from unittest.mock import MagicMock, patch
+
 import docx
-import pytest
+
 from micar_linter.document import load_from_docx, load_from_pdf
-from micar_linter.whitepaper import load_whitepaper, WhitepaperType
+from micar_linter.whitepaper import WhitepaperType, load_whitepaper
 
 
 def test_load_from_docx(tmp_path: Path):

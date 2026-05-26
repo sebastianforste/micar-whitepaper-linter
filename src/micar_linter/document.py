@@ -18,9 +18,9 @@ SECTION_PATTERNS = {
     "trading_platform_operator": [r"\btrading\s+platform\b", r"\bhandelsplattform\b", r"\boperator\b.*\btrading\b"],
     "project": [r"\bproject\b", r"\bprojekt\b", r"\bbusiness\s+model\b", r"\bteam\b"],
     "offer_or_admission": [r"\bpublic\s+offer\b", r"\bzulassung\b", r"\badmission\s+to\s+trading\b", r"\boffer\b.*\badmission\b"],
-    "crypto_asset": [r"\bcrypto-asset\b", r"\bcrypto\s+asset\b", r"\bcharacteristics\b.*\bcrypto\b"],
-    "art": [r"\basset-referenced\s+token\b", r"\bstabilisation\s+mechanism\b", r"\breference\s+assets\b"],
-    "emt": [r"\be-money\s+token\b", r"\bdenomination\b", r"\breferenced\s+currency\b"],
+    "crypto_asset": [r"\bcrypto-asset\b", r"\bcrypto\s+asset\b", r"\bcharacteristics\b.*\bcrypto\b", r"\binformation\s+about\s+the\s+token\b", r"\bthe\s+token\b"],
+    "art": [r"\basset-referenced\s+token\b", r"\bstabilisation\s+mechanism\b", r"\breference\s+assets\b", r"\binformation\s+about\s+the\s+token\b", r"\bthe\s+token\b"],
+    "emt": [r"\be-money\s+token\b", r"\bdenomination\b", r"\breferenced\s+currency\b", r"\binformation\s+about\s+the\s+token\b", r"\bthe\s+token\b"],
     "rights_and_obligations": [r"\brights\s+and\s+obligations\b", r"\brechte\s+und\s+pflichten\b", r"\bholder\s+rights\b"],
     "technology": [r"\btechnology\b", r"\btechnologie\b", r"\bunderlying\s+technology\b", r"\bdlt\b", r"\bconsensus\b"],
     "risks": [r"\brisk\s+factors\b", r"\brisikofaktoren\b", r"\brisks\b", r"\brisiken\b"],
@@ -31,52 +31,62 @@ SECTION_PATTERNS = {
 }
 
 
-def match_heading_to_section(heading: str) -> str | None:
-    """Matches a heading line to a known ruleset section key."""
+def match_heading_to_section(heading: str) -> list[str]:
+    """Matches a heading line to a list of known ruleset section keys."""
     normalized = heading.lower()
+    matched = []
     for key, patterns in SECTION_PATTERNS.items():
         for pattern in patterns:
             if re.search(pattern, normalized):
-                return key
-    return None
+                matched.append(key)
+                break
+    return matched
 
 
 def load_from_docx(path: Path) -> dict[str, str]:
     """Parse a DOCX file and group text paragraphs under identified section headings."""
-    import docx
+    try:
+        import docx
+    except ImportError as exc:
+        raise SystemExit(
+            "DOCX support requires the optional 'docx' extra: pip install micar-whitepaper-linter[docx]"
+        ) from exc
 
     doc = docx.Document(path)
     sections: dict[str, list[str]] = {}
-    current_key = None
+    current_keys = []
 
     for para in doc.paragraphs:
         text = para.text.strip()
         if not text:
             continue
 
-        # Heuristics for DOCX headings
-        is_heading = False
-        if para.style.name.startswith("Heading"):
-            is_heading = True
-        elif any(run.bold for run in para.runs) and len(text) < 120:
-            is_heading = True
-        elif text.isupper() and len(text) < 120:
-            is_heading = True
+        is_heading = (
+            para.style.name.startswith("Heading")
+            or (any(run.bold for run in para.runs) and len(text) < 120)
+            or (text.isupper() and len(text) < 120)
+        )
 
         if is_heading:
-            matched_key = match_heading_to_section(text)
-            if matched_key:
-                current_key = matched_key
+            matched_keys = match_heading_to_section(text)
+            if matched_keys:
+                current_keys = matched_keys
 
-        if current_key:
-            sections.setdefault(current_key, []).append(text)
+        if current_keys:
+            for k in current_keys:
+                sections.setdefault(k, []).append(text)
 
     return {k: "\n".join(v) for k, v in sections.items()}
 
 
 def load_from_pdf(path: Path) -> dict[str, str]:
     """Parse a PDF file and extract text grouped under identified section headings."""
-    import pypdf
+    try:
+        import pypdf
+    except ImportError as exc:
+        raise SystemExit(
+            "PDF support requires the optional 'pdf' extra: pip install micar-whitepaper-linter[pdf]"
+        ) from exc
 
     reader = pypdf.PdfReader(path)
     full_text_lines = []
@@ -87,7 +97,7 @@ def load_from_pdf(path: Path) -> dict[str, str]:
             full_text_lines.extend(text.splitlines())
 
     sections: dict[str, list[str]] = {}
-    current_key = None
+    current_keys = []
 
     for line in full_text_lines:
         line_clean = line.strip()
@@ -97,16 +107,17 @@ def load_from_pdf(path: Path) -> dict[str, str]:
         # Heuristics for PDF line headings
         is_heading = False
         if len(line_clean) < 120:
-            matched_key = match_heading_to_section(line_clean)
-            if matched_key:
+            matched_keys = match_heading_to_section(line_clean)
+            if matched_keys:
                 is_heading = True
 
         if is_heading:
-            matched_key = match_heading_to_section(line_clean)
-            if matched_key:
-                current_key = matched_key
+            matched_keys = match_heading_to_section(line_clean)
+            if matched_keys:
+                current_keys = matched_keys
 
-        if current_key:
-            sections.setdefault(current_key, []).append(line_clean)
+        if current_keys:
+            for k in current_keys:
+                sections.setdefault(k, []).append(line_clean)
 
     return {k: "\n".join(v) for k, v in sections.items()}

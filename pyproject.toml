@@ -21,15 +21,17 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Topic :: Office/Business :: Financial",
 ]
-dependencies = [
-  "pypdf>=4.0",
-  "python-docx>=1.0",
-]
+dependencies = []
 
 [project.optional-dependencies]
+docx = ["python-docx>=1.0"]
+pdf = ["pypdf>=4.0"]
+all = ["python-docx>=1.0", "pypdf>=4.0"]
 dev = [
   "pytest>=8.0",
   "ruff>=0.5",
+  "python-docx>=1.0",
+  "pypdf>=4.0",
 ]
 
 [project.scripts]
@@ -52,3 +54,4 @@ ignore = ["UP032", "RUF022"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["E501"]
+"src/micar_linter/document.py" = ["E501"]

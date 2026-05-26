@@ -87,14 +87,26 @@ def load_whitepaper(path: Path) -> Whitepaper:
         except Exception as exc:
             raise SystemExit(f"Error reading document {path}: {exc}") from exc
 
-        # Infer whitepaper type based on keywords in full text
         full_text = "\n".join(sections.values()).lower()
-        if "asset-referenced" in full_text or "stabilisation mechanism" in full_text or "reserve of assets" in full_text:
+        art_markers = ("asset-referenced", "stabilisation mechanism", "reserve of assets")
+        emt_markers = ("e-money token", "referenced currency", "safeguarding of funds")
+        if any(marker in full_text for marker in art_markers):
             wp_type = WhitepaperType.ART
-        elif "e-money token" in full_text or "referenced currency" in full_text or "safeguarding of funds" in full_text:
+        elif any(marker in full_text for marker in emt_markers):
             wp_type = WhitepaperType.EMT
         else:
             wp_type = WhitepaperType.OTHER
+
+        # Clean up duplicate mapped token sections to avoid unrecognized section warnings
+        if wp_type == WhitepaperType.ART:
+            sections.pop("emt", None)
+            sections.pop("crypto_asset", None)
+        elif wp_type == WhitepaperType.EMT:
+            sections.pop("art", None)
+            sections.pop("crypto_asset", None)
+        else:
+            sections.pop("art", None)
+            sections.pop("emt", None)
 
         title = path.stem.replace("-", " ").replace("_", " ").title()
         metadata = {"source_file": str(path)}
