@@ -39,84 +39,95 @@ class Whitepaper:
 def load_whitepaper(path: Path) -> Whitepaper:
     """Load and validate a white paper JSON, PDF, or DOCX file."""
     suffix = path.suffix.lower()
-    
+
     if suffix == ".json":
-        try:
-            raw = path.read_text(encoding="utf-8")
-            data = json.loads(raw)
-        except FileNotFoundError as exc:
-            raise SystemExit(f"File not found: {path}") from exc
-        except json.JSONDecodeError as exc:
-            raise SystemExit(f"Invalid JSON in {path}: {exc}") from exc
+        return _load_json(path)
+    if suffix in (".pdf", ".docx"):
+        return _load_document(path, suffix)
+    raise SystemExit(f"Unsupported file format '{suffix}'. Expected: .json, .pdf, .docx")
 
-        if not isinstance(data, dict):
-            raise SystemExit("Whitepaper JSON must be an object.")
-        if not isinstance(data.get("sections"), dict):
-            raise SystemExit("Whitepaper JSON must contain a 'sections' object.")
 
-        type_str = str(data.get("type", "other")).lower()
-        try:
-            wp_type = WhitepaperType(type_str)
-        except ValueError as exc:
-            raise SystemExit(
-                f"Unknown whitepaper type '{type_str}'. Expected one of: "
-                + ", ".join(t.value for t in WhitepaperType)
-            ) from exc
+def _load_json(path: Path) -> Whitepaper:
+    try:
+        raw = path.read_text(encoding="utf-8")
+        data = json.loads(raw)
+    except FileNotFoundError as exc:
+        raise SystemExit(f"File not found: {path}") from exc
+    except json.JSONDecodeError as exc:
+        raise SystemExit(f"Invalid JSON in {path}: {exc}") from exc
 
-        sections = {str(k): (v if isinstance(v, str) else str(v)) for k, v in data["sections"].items()}
-        metadata = {k: v for k, v in data.items() if k not in ("title", "type", "sections")}
+    if not isinstance(data, dict):
+        raise SystemExit("Whitepaper JSON must be an object.")
+    if not isinstance(data.get("sections"), dict):
+        raise SystemExit("Whitepaper JSON must contain a 'sections' object.")
 
-        return Whitepaper(
-            title=str(data.get("title", "Untitled white paper")),
-            type=wp_type,
-            sections=sections,
-            metadata=metadata,
-        )
-        
-    elif suffix in (".pdf", ".docx"):
-        if not path.exists():
-            raise SystemExit(f"File not found: {path}")
-            
-        try:
-            if suffix == ".pdf":
-                from micar_linter.document import load_from_pdf
-                sections = load_from_pdf(path)
-            else:
-                from micar_linter.document import load_from_docx
-                sections = load_from_docx(path)
-        except Exception as exc:
-            raise SystemExit(f"Error reading document {path}: {exc}") from exc
+    type_str = str(data.get("type", "other")).lower()
+    try:
+        wp_type = WhitepaperType(type_str)
+    except ValueError as exc:
+        raise SystemExit(
+            f"Unknown whitepaper type '{type_str}'. Expected one of: "
+            + ", ".join(t.value for t in WhitepaperType)
+        ) from exc
 
-        full_text = "\n".join(sections.values()).lower()
-        art_markers = ("asset-referenced", "stabilisation mechanism", "reserve of assets")
-        emt_markers = ("e-money token", "referenced currency", "safeguarding of funds")
-        if any(marker in full_text for marker in art_markers):
-            wp_type = WhitepaperType.ART
-        elif any(marker in full_text for marker in emt_markers):
-            wp_type = WhitepaperType.EMT
+    sections = {
+        str(k): (v if isinstance(v, str) else str(v))
+        for k, v in data["sections"].items()
+    }
+    metadata = {k: v for k, v in data.items() if k not in ("title", "type", "sections")}
+
+    return Whitepaper(
+        title=str(data.get("title", "Untitled white paper")),
+        type=wp_type,
+        sections=sections,
+        metadata=metadata,
+    )
+
+
+def _load_document(path: Path, suffix: str) -> Whitepaper:
+    if not path.exists():
+        raise SystemExit(f"File not found: {path}")
+
+    try:
+        if suffix == ".pdf":
+            from micar_linter.document import load_from_pdf
+
+            sections = load_from_pdf(path)
         else:
-            wp_type = WhitepaperType.OTHER
+            from micar_linter.document import load_from_docx
 
-        # Clean up duplicate mapped token sections to avoid unrecognized section warnings
-        if wp_type == WhitepaperType.ART:
-            sections.pop("emt", None)
-            sections.pop("crypto_asset", None)
-        elif wp_type == WhitepaperType.EMT:
-            sections.pop("art", None)
-            sections.pop("crypto_asset", None)
-        else:
-            sections.pop("art", None)
-            sections.pop("emt", None)
+            sections = load_from_docx(path)
+    except SystemExit:
+        raise
+    except Exception as exc:
+        raise SystemExit(f"Error reading document {path}: {exc}") from exc
 
-        title = path.stem.replace("-", " ").replace("_", " ").title()
-        metadata = {"source_file": str(path)}
-
-        return Whitepaper(
-            title=title,
-            type=wp_type,
-            sections=sections,
-            metadata=metadata,
-        )
-        
+    full_text = "\n".join(sections.values()).lower()
+    art_markers = ("asset-referenced", "stabilisation mechanism", "reserve of assets")
+    emt_markers = ("e-money token", "referenced currency", "safeguarding of funds")
+    if any(marker in full_text for marker in art_markers):
+        wp_type = WhitepaperType.ART
+    elif any(marker in full_text for marker in emt_markers):
+        wp_type = WhitepaperType.EMT
     else:
-        raise SystemExit(f"Unsupported file format '{suffix}'. Expected: .json, .pdf, .docx")
+        wp_type = WhitepaperType.OTHER
+
+    if wp_type is WhitepaperType.ART:
+        sections.pop("emt", None)
+        sections.pop("crypto_asset", None)
+    elif wp_type is WhitepaperType.EMT:
+        sections.pop("art", None)
+        sections.pop("crypto_asset", None)
+    else:
+        sections.pop("art", None)
+        sections.pop("emt", None)
+
+    title = path.stem.replace("-", " ").replace("_", " ").title()
+    metadata = {"source_file": str(path)}
+
+    return Whitepaper(
+        title=title,
+        type=wp_type,
+        sections=sections,
+        metadata=metadata,
+    )
