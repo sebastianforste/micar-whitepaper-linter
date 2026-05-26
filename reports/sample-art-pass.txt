@@ -1,0 +1,64 @@
+MiCAR Whitepaper Linter — EuroStable ART White Paper
+Whitepaper type: ART
+==============================================================================
+Pass: 14  |  Review: 0  |  Missing: 0  |  Blockers: 0
+
+[PASS  ] [BLOCKER] COMMON.SUMMARY  Plain-language summary
+           Cite:  Art. 6 Abs. 7, Art. 19 Abs. 7, Art. 51 Abs. 7 MiCAR
+           Section: 'summary'  (85 words)
+
+[PASS  ] [BLOCKER] COMMON.RISK_WARNING  Mandatory risk warning statement
+           Cite:  Art. 6 Abs. 5, Art. 19 Abs. 5, Art. 51 Abs. 5 MiCAR
+           Section: 'risk_warning'  (73 words)
+
+[PASS  ] [BLOCKER] COMMON.MANAGEMENT_STATEMENT  Statement by the management body on completeness, fairness, and clarity
+           Cite:  Art. 6 Abs. 6, Art. 19 Abs. 6, Art. 51 Abs. 6 MiCAR
+           Section: 'management_statement'  (60 words)
+
+[PASS  ] [MAJOR  ] COMMON.NOTIFICATION_DATE  Date of notification to the competent authority
+           Cite:  Art. 8 Abs. 1, Art. 17, Art. 49 MiCAR
+           Section: 'notification_date'  (8 words)
+
+[PASS  ] [MAJOR  ] COMMON.LANGUAGE  Language of the white paper (official language of the home Member State or customary in international finance)
+           Cite:  Art. 6 Abs. 12, Art. 19 Abs. 11, Art. 51 Abs. 10 MiCAR
+           Section: 'language'  (28 words)
+
+[PASS  ] [BLOCKER] ANNEX_II.A  Information about the issuer of the ART (legal form, governance, prudential profile)
+           Cite:  Anhang II Teil A MiCAR
+           Section: 'issuer'  (97 words)
+
+[PASS  ] [BLOCKER] ANNEX_II.B  Information about the asset-referenced token (reference assets, stabilisation mechanism)
+           Cite:  Anhang II Teil B MiCAR
+           Section: 'art'  (95 words)
+
+[PASS  ] [BLOCKER] ANNEX_II.C  Information about the offer to the public of the ART or its admission to trading
+           Cite:  Anhang II Teil C MiCAR
+           Section: 'offer_or_admission'  (77 words)
+
+[PASS  ] [BLOCKER] ANNEX_II.D  Rights and obligations of holders (redemption right at par, complaints handling)
+           Cite:  Anhang II Teil D i.V.m. Art. 39 MiCAR
+           Section: 'rights_and_obligations'  (94 words)
+
+[PASS  ] [BLOCKER] ANNEX_II.E  Information on the underlying technology (DLT, custody architecture, key management)
+           Cite:  Anhang II Teil E MiCAR
+           Section: 'technology'  (77 words)
+
+[PASS  ] [BLOCKER] ANNEX_II.F  Risk factors specific to ARTs (de-pegging, reserve impairment, redemption suspension)
+           Cite:  Anhang II Teil F MiCAR
+           Section: 'risks'  (157 words)
+
+[PASS  ] [BLOCKER] ANNEX_II.G  Reserve of assets (composition, custody, segregation, valuation, audit)
+           Cite:  Anhang II Teil G i.V.m. Art. 36 MiCAR
+           Section: 'reserve_of_assets'  (169 words)
+
+[PASS  ] [MAJOR  ] ANNEX_II.H  Principal adverse environmental and climate-related impact of the consensus mechanism
+           Cite:  Anhang II Teil H i.V.m. ESMA RTS on sustainability indicators
+           Section: 'environmental_impact'  (104 words)
+
+[PASS  ] [BLOCKER] ANNEX_II.I  Redemption rights and procedure (timing, fees, suspension conditions)
+           Cite:  Anhang II Teil I i.V.m. Art. 39 MiCAR
+           Section: 'redemption'  (125 words)
+
+==============================================================================
+All required disclosures present. Lawyer review still required.
+This tool is not legal advice.
