@@ -99,6 +99,10 @@ reports/
 tests/
 ```
 
+## Launch readiness
+
+For a reviewer-friendly runbook covering demo path, checks, sample-data rules, architecture and safety posture, see [`docs/launch-readiness.md`](docs/launch-readiness.md).
+
 ## Roadmap
 
 See open issues. Headline items: more granular rule coverage, German-language draft support, public supervisory source enrichment and a reviewer audit log.
